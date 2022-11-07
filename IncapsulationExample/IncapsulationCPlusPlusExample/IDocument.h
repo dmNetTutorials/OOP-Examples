@@ -58,3 +58,13 @@ public:
 	// Задати тип документа
 
 };
+
+// Відомості про автора документа
+struct AuthorMetaData
+{
+	char* FirstName;	// Ім'я
+	char* SecondName;	// Прізвище
+
+	// Сформувати ПІБ автора
+	char* GetFullName() const;
+};
