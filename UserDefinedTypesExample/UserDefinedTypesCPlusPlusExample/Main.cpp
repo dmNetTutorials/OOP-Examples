@@ -20,6 +20,16 @@ protected:
 	// Дата створення документа
 	unsigned long int _creationDate;
 public:
+	// Дата останньої зміни документа,
+	// може бути змінена поза межами 
+	// поточної програми
+	volatile time_t LastModifiedDateTimeStamp;
+
+	// Чи архівний документ?
+	// Навіть затверджений документ
+	// можна зробити архівним
+	mutable bool IsArchived;
+
 	// Загальнодоступна частина (інтерфейс)
 	// Дізнатись хто автор документа
 	char* GetAuthor()
@@ -54,7 +64,7 @@ class User
 	// Максимальна кількість спроб 
 	// для вводу правильних даних
 	const short int _maximumTriesAmount = 3;
-	// Поточна кількість спроб 
+	// Поточна кількість спроб
 	short int _currentTriesAmount;
 public:
 	// Дізнатись скільки було спроб авторизації
@@ -65,7 +75,6 @@ public:
 		// всередині класу User
 		return _currentTriesAmount;
 	}
-
 };
 
 int main()
