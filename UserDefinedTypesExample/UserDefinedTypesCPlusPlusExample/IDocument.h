@@ -44,12 +44,12 @@ union DocumentStatus
 	заголовочному файлі (.h)
 
 */
-
 class IDocument
 {
 	/*
 		Інтерфейс повинен складатись
-		тільки з відкритих методів (функцій)
+		ТІЛЬКИ з відкритих "чисто віртуальних"
+		методів (функцій)
 	*/
 public:
 	// Отримати ПІБ автора документа
@@ -60,6 +60,79 @@ public:
 	virtual DocumentType GetType() const = 0;
 	// Задати тип документа
 
+};
+
+class DocumentBase : IDocument
+{
+	/*
+		Абстрактний клас, повинен мати
+		який має хоча б один "чисто віртуальний"
+		метод (функцію)
+	*/
+protected:
+	/*
+		В абстрактних класах дозволяється 
+		створювати поля та властивості
+	*/
+	// Статус документа, є властивістю
+	DocumentStatus Status;
+public:
+	// Отримати ПІБ автора документа
+	virtual const char* GetAuthorFullName() const = 0;
+	// Отримати час та дату останніх змін документа
+	virtual unsigned long GetLastModifiedTimeStamp() const = 0;
+	// Отримати тип документа (заява, звіт і т.д.)
+	virtual DocumentType GetType() const = 0;
+	// Дізнатись поточний статус документа
+	DocumentStatus GetStatus()
+	{
+		return this->Status;
+	}
+	// Змінити статус документа
+	void SetStatus(DocumentStatus newStatus)
+	{
+		this->Status = newStatus;
+	}
+
+};
+
+/*
+		Віртуальний клас, повинен мати
+		який має хоча б один віртуальний
+		метод (функцію)
+*/
+class Document : DocumentBase
+{
+private:
+public:
+	// Конструктор за замовчуванням
+	Document()
+	{
+		// Коли створюється документ,
+		// він стає діючим
+		Status.Active = true;
+	}
+	// Деструктор (може бути тільки один)
+	~Document()
+	{
+		// Коли документ знищується,
+		// то його статус стає невідомим 
+		Status.Unknown = true;
+	}
+};
+
+
+/*
+	Конкретний клас, повинен реалізовувати
+	всі віртуальні та "чисто віртуальні"
+	методи, або власні методи
+*/
+class Statement : Document
+{
+public:
+	// Максимальна к-сть днів для опрацювання 
+	// ВСІХ видів заяв.
+	static short MaximumProcessingDaysDeadline;
 };
 
 // Відомості про автора документа
