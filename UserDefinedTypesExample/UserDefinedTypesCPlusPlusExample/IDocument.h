@@ -1,5 +1,7 @@
 #pragma once
 
+#include<string>
+
 /*
 	Перелік типів документів, що
 	підтримуються в програмі
@@ -71,29 +73,28 @@ class DocumentBase : IDocument
 	*/
 protected:
 	/*
-		В абстрактних класах дозволяється 
+		В абстрактних класах дозволяється
 		створювати поля та властивості
 	*/
 	// Статус документа, є властивістю
 	DocumentStatus Status;
 public:
+	// Загальна кількість документів 
+	// будь-яких типів в системі,
+	// дане поле спільне для 
+	// всіх документів
+	static int TotalDocumentsAmount;
+	// Оновити загальну к-сть документів
+	// в системі
+	static void ChangeTotalDocumentsAmount(int newAmount);
 	// Отримати ПІБ автора документа
 	virtual const char* GetAuthorFullName() const = 0;
-	// Отримати час та дату останніх змін документа
-	virtual unsigned long GetLastModifiedTimeStamp() const = 0;
 	// Отримати тип документа (заява, звіт і т.д.)
 	virtual DocumentType GetType() const = 0;
 	// Дізнатись поточний статус документа
-	DocumentStatus GetStatus()
-	{
-		return this->Status;
-	}
+	DocumentStatus GetStatus();
 	// Змінити статус документа
-	void SetStatus(DocumentStatus newStatus)
-	{
-		this->Status = newStatus;
-	}
-
+	void SetStatus(DocumentStatus newStatus);
 };
 
 /*
@@ -103,24 +104,56 @@ public:
 */
 class Document : DocumentBase
 {
+	// зазвичай, назви закритих 
+	// та захищених елементів починаються 
+	// з символу _ (нижня риска)
 private:
-public:
-	// Конструктор за замовчуванням
-	Document()
-	{
-		// Коли створюється документ,
-		// він стає діючим
-		Status.Active = true;
-	}
-	// Деструктор (може бути тільки один)
-	~Document()
-	{
-		// Коли документ знищується,
-		// то його статус стає невідомим 
-		Status.Unknown = true;
-	}
-};
+	// Унікальні властивості для
+	// даного виду документа
 
+	// Реєстраційний номер документа
+	char* _registerID;
+protected:
+	// Характерні властивості для 
+	// подібних документів
+
+	// Автор документа
+	char* _author;
+	// Дата створення документа
+	unsigned long int _creationDate;
+public:
+	// Отримати всю інформацію про документ,
+	// реалізація методу може бути 
+	// перевизначена (override) в дочірніх класах
+	virtual std::string GetFullInfo();
+
+	virtual const char* GetAuthorFullName() const final override;
+	virtual DocumentType GetType() const final override;
+	virtual unsigned long GetLastModifiedTimeStamp() const final override;
+
+	// Конструктор за замовчуванням
+	Document();
+	// Деструктор (може бути тільки один)
+	~Document();
+	// Дата останньої зміни документа,
+	// може бути змінена поза межами 
+	// поточної програми
+	volatile time_t LastModifiedDateTimeStamp;
+
+	// Чи архівний документ?
+	// Навіть затверджений документ
+	// можна зробити архівним
+	mutable bool IsArchived;
+
+	// Чи затверджено документ?
+	bool IsCompleted;
+
+	// Статус документа
+	DocumentStatus Status;
+
+	// Дізнатись дату створення документа
+	unsigned long int GetCreationDate();
+};
 
 /*
 	Конкретний клас, повинен реалізовувати
@@ -133,14 +166,4 @@ public:
 	// Максимальна к-сть днів для опрацювання 
 	// ВСІХ видів заяв.
 	static short MaximumProcessingDaysDeadline;
-};
-
-// Відомості про автора документа
-struct AuthorMetaData
-{
-	char* FirstName;	// Ім'я
-	char* SecondName;	// Прізвище
-
-	// Сформувати ПІБ автора
-	char* GetFullName() const;
 };
