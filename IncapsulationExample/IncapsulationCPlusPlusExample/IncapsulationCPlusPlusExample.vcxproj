@@ -128,8 +128,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MinistryOrder.cpp" />
+    <ClCompile Include="OrderBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MinistryOrder.h" />
+    <ClInclude Include="OrderBase.h" />
     <ClInclude Include="IDocument.h" />
     <ClInclude Include="Main.h" />
   </ItemGroup>
